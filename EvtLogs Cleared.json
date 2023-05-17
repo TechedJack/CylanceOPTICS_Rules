@@ -1,0 +1,81 @@
+{
+    "SchemaVersion": 1,
+    "ObjectType": "DetectionRule",
+    "Name": "Check if Windows Event Logs are being Cleared",
+    "Description": "This rule checks if the Windows event logs are being cleared using the wevtutil command line utility.",
+    "Tags": ["Windows_Event_Logs", "Security", "CylanceOPTICS"],
+    "RuleSource": "Cylance",
+    "RuleSourceGrouping": "Optics Official",
+    "Severity": "High",
+    "Product": {"Name": "CylanceOPTICS"},
+    "Plugin": {"Name": "OpticsDetector"},
+    "OperatingSystems": [{"Name": "Windows"}],
+    "PostCompletionActions": ["GenerateDetectionEvent"],
+    "States": [
+      {
+        "Name": "Start",
+        "Scope": "Global",
+        "Function": "(a&b)",
+        "FieldOperators": {
+          "a": {
+            "Type": "EqualsAny",
+            "Operands": [
+              {
+                "Source": "TargetProcess",
+                "Data": "Name"
+              },
+              {
+                "Source": "Literal",
+                "Data": "wevtutil.exe"
+              },
+              {
+                "Source": "Literal",
+                "Data": "wevtutil"
+              }
+            ],
+            "OperandType": "String",
+            "Options": {
+              "IgnoreCase": true
+            }
+          },
+          "b": {
+            "Type": "ContainsAny",
+            "Operands": [
+              {
+                "Source": "TargetProcess",
+                "Data": "CommandLine"
+              },
+              {
+                "Source": "Literal",
+                "Data": "cl"
+              }
+            ],
+            "OperandType": "String"
+          }
+        },
+        "Filters": [
+          {
+            "Type": "Event",
+            "Data": {
+              "Category": "Process",
+              "SubCategory": "",
+              "Type": "Start"
+            }
+          }
+        ],
+        "HarvestContributingEvent": true,
+        "Actions": [
+          {
+            "Type": "AOI",
+            "ItemName": "InstigatingProcess",
+            "Position": "PostActivation"
+          },
+          {
+            "Type": "AOI",
+            "ItemName": "TargetProcess",
+            "Position": "PostActivation"
+          }
+        ]
+      }
+    ]
+  }
