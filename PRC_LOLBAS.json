@@ -1,0 +1,86 @@
+{
+  "States": [
+    {
+      "Name": "Start",
+      "Scope": "Global",
+      "Function": "(a&b)",
+      "FieldOperators": {
+        "a": {
+          "Type": "ContainsAny",
+          "Operands": [
+            {
+              "Source": "TargetProcess",
+              "Data": "CommandLine"
+            },
+            {
+              "Source": "Literal",
+              "Data": [
+                "ntdsutil",
+                "ac i ntds",
+                "create full",
+                "portproxy",
+                "netsh",
+                "wmic",
+                "process call create",
+                "v4tov4",
+                "listenport=50100"
+              ]
+            }
+          ],
+          "OperandType": "String"
+        },
+        "b": {
+          "Type": "ContainsAny",
+          "Operands": [
+            {
+              "Source": "TargetProcess",
+              "Data": "CommandLine"
+            },
+            {
+              "Source": "Literal",
+              "Data": [
+                "\\\\*\\ADMIN$",
+                "SYSTEM32",
+                ".tmp"
+              ]
+            }
+          ],
+          "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "",
+            "Type": "Start"
+          }
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        }
+      ]
+    }
+  ],
+  "Tags": [
+    "State-Sponsored_Cyber_Actor",
+    "Living_off_the_Land",
+    "Evade_Detection",
+    "CylanceOPTICS",
+    "Security"
+  ],
+  "PostCompletionActions": [
+    "GenerateDetectionEvent"
+  ]
+}
